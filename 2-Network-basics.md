@@ -94,3 +94,46 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 
 - This wont persist through system reboots so to make it persistant we need to change the `net.ip4.ip_forward` value in the `/etc/sysctl.conf` file.
 
+### DNS
+
+- It stands for `Domain Name System`, and it is a way of assigning names to hosts and the match them with their ips, this is known as `Name Resolution`.
+
+- We can add a `DNS record` in the `/etc/hosts` file to assign the name.
+
+```
+cat >> /etc/hosts
+192.168.1.11    db
+```
+
+- If we have a large set of hosts in a network and the IP of one of them changes, instead of changing every `hosts` file in every host, we can setup a `DNS Server` and point every host to read the `hosts` file from here.
+
+- We can specify the DNS server (supposing it has ip `192.168.1.100`) adding an entry to the `/etc/resolv.conf` file like this:
+```
+nameserver  192.168.1.100
+```
+
+- By default to resolve the name-ip the system first looks into the local `/etc/hosts` file and then in the `DNS Server`.
+
+- We can modify this behaviour in the `/etc/nsswitch.conf` file:
+```
+....
+hosts:  files dns
+....
+```
+
+- Change the order to `dns` `files` and it will look first in the DNS Server.
+
+- If there is not a server named on your DNS Server (for example facebook) we can set another DNS server entry in the `/etc/resolv.conf` file, like `google's` public server with ip `8.8.8.8`.
+
+### Domain Names
+
+- The www.page.com format is called `domain name` and it is how IP is translate to names that we can remember on the public internet.
+
+- The `last` portion of the domain name, .com, .net, .org, .edu, etc. are the top level domains, and represent the intent of the website .com for `commertial` or .edu for `education`.
+
+- To resolve names without the `mycompany.com` part we need to add a new entry to the `/etc/resolv.conf` file like this:
+```
+search  mycompany.com prod.mycompany.com
+```
+
+- We can find information about servers with the commands `nslookup` and `dig`.
